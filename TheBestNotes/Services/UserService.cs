@@ -31,16 +31,6 @@ public class UserService : IUserService
 
     }
 
-    public UserDTO GetUser(string username)
-    {
-        throw new NotImplementedException();
-    }
-
-    public UserDTO GetUser(Guid userId)
-    {
-        throw new NotImplementedException();
-    }
-
     private User GetCompleteUser(string username)
     {
         return _db.Users.Single(u => u.Username == username);
