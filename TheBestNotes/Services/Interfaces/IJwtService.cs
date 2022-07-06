@@ -1,4 +1,4 @@
-namespace TheBestNotes.Services;
+namespace TheBestNotes.Services.Interfaces;
 
 public interface IJwtService
 {

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TheBestNotes.Models;
+using TheBestNotes.Services.Interfaces;
 
 namespace TheBestNotes.Services;
 
@@ -12,35 +13,54 @@ public class NoteService : INoteService
         _db = dbContext;
     }
     
-    public void AddNewNote(Guid ownerUserId, string title, string content)
+    public void AddNewNote(Guid ownerUserId, string title, string category, string content)
     {
         var noteToAdd = new Note()
         {
             Owner = _db.Users.Single(u => u.Id == ownerUserId),
             Title = title,
+            Category = category,
             Content = content
         };
 
         _db.Notes.Add(noteToAdd);
+        _db.SaveChanges();
     }
 
     public Note GetNote(Guid requestingUserId, Guid noteId)
     {
-        throw new NotImplementedException();
+        return _db.Notes.Single(n => n.Id == noteId);
     }
 
-    public bool UpdateNote(Guid requestingUserId, Guid noteId, string title, string content)
+    public List<Note> GetAllNotes(Guid userId)
     {
-        throw new NotImplementedException();
+        var notes = new List<Note>();
+
+        var ownedNotes = _db.Notes.Where(n => n.Owner.Id == userId);
+        notes.AddRange(ownedNotes);
+        
+        return notes;
     }
 
-    public bool DeleteNote(Guid requestingUserId, Guid noteId)
+    public void UpdateNote(Guid requestingUserId, Guid noteId, string title, string content)
     {
-        throw new NotImplementedException();
+        var noteToUpdate = _db.Notes.Single(n => n.Id == noteId);
+        noteToUpdate.Title = title;
+        noteToUpdate.Content = content;
+        _db.SaveChanges();
     }
 
-    public bool ShareNote(Guid requestingUserId, Guid userIdToShareWith, Guid noteId)
+    public void DeleteNote(Guid requestingUserId, Guid noteId)
     {
-        throw new NotImplementedException();
+        var noteToDelete = _db.Notes.Single(n => n.Id == noteId);
+        _db.Notes.Remove(noteToDelete);
+        _db.SaveChanges();
+    }
+
+    public bool HasAccessToNote(Guid userId, Guid noteToAccessId)
+    {
+        var isOwner = _db.Notes.Any(n => n.Owner.Id == userId && n.Id == noteToAccessId);
+        
+        return isOwner;
     }
 }

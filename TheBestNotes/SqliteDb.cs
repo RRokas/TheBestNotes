@@ -20,9 +20,5 @@ public class SqliteDb : DbContext
         notes
             .HasOne(i => i.Owner)
             .WithMany(i => i.OwnedNotes);
-
-        notes
-            .HasMany(i => i.SharedWith)
-            .WithMany(i => i.SharedWithUser);
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TheBestNotes.Models;
 using TheBestNotes.Models.DTO;
 using TheBestNotes.Services;
+using TheBestNotes.Services.Interfaces;
 
 namespace TheBestNotes.Controllers;
 
