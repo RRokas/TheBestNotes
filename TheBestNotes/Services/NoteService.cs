@@ -13,13 +13,12 @@ public class NoteService : INoteService
         _db = dbContext;
     }
     
-    public void AddNewNote(Guid ownerUserId, string title, string category, string content)
+    public void AddNewNote(Guid ownerUserId, string title, string content)
     {
         var noteToAdd = new Note()
         {
             Owner = _db.Users.Single(u => u.Id == ownerUserId),
             Title = title,
-            Category = category,
             Content = content
         };
 
@@ -55,6 +54,42 @@ public class NoteService : INoteService
         var noteToDelete = _db.Notes.Single(n => n.Id == noteId);
         _db.Notes.Remove(noteToDelete);
         _db.SaveChanges();
+    }
+
+    public void AddCategory(Guid userId, string name)
+    {
+        var owner = _db.Users.Single(u => u.Id == userId);
+        var alreadyExists = _db.NoteCategories.Any(c => c.Name == name && c.Owner.Id == userId);
+
+        if (!alreadyExists)
+        {
+            _db.NoteCategories.Add(new NoteCategory()
+            {
+                Name = name,
+                Owner = owner
+            });
+            _db.SaveChanges();
+        }
+    }
+
+    public void DeleteCategory(Guid categoryId)
+    {
+        var categoryToRemove = _db.NoteCategories.Single(c => c.Id == categoryId);
+        _db.NoteCategories.Remove(categoryToRemove);
+        _db.SaveChanges();
+    }
+
+    public void AssignCategory(Guid noteId, Guid categoryId)
+    {
+        var note = _db.Notes.Single(n => n.Id == noteId);
+        var category = _db.NoteCategories.Single(c => c.Id == categoryId);
+        note.Category = category;
+        _db.SaveChanges();
+    }
+
+    public NoteCategory GetNoteCategory(Guid categoryId)
+    {
+        return _db.NoteCategories.Single(c => c.Id == categoryId);
     }
 
     public bool HasAccessToNote(Guid userId, Guid noteToAccessId)

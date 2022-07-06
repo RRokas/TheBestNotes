@@ -7,6 +7,7 @@ public class SqliteDb : DbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Note> Notes { get; set; }
+    public DbSet<NoteCategory> NoteCategories { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -16,6 +17,7 @@ public class SqliteDb : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var notes = modelBuilder.Entity<Note>();
+        var categories = modelBuilder.Entity<NoteCategory>();
 
         notes
             .HasOne(i => i.Owner)
