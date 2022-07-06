@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TheBestNotes.Models.DTO;
 
-public class BaseNoteDTO
+public class BaseNoteDto
 {
     [Required]
     public string Title { get; init; }

@@ -21,11 +21,11 @@ public class Notes : Controller
 
     [Authorize]
     [HttpPost("Create")]
-    public void Create([FromBody] BaseNoteDTO noteData)
+    public void Create([FromBody] BaseNoteDto noteData)
     {
         var owner = User.FindFirst(ClaimTypes.NameIdentifier).Value;
         var ownerGuid = new Guid(owner);
-        _noteService.AddNewNote(ownerGuid, noteData.Title, noteData.Category, noteData.Content);
+        _noteService.AddNewNote(ownerGuid, noteData.Title, noteData.Content);
     }
 
     [Authorize]
@@ -44,7 +44,7 @@ public class Notes : Controller
     [Authorize]
     [ServiceFilter(typeof(MustBeOwnerOfNoteAttribute))]
     [HttpPut("UpdateNote")]
-    public IActionResult UpdateNote([FromQuery] Guid noteId, [FromBody] BaseNoteDTO noteDto)
+    public IActionResult UpdateNote([FromQuery] Guid noteId, [FromBody] BaseNoteDto noteDto)
     {
         var title = noteDto.Title;
         var content = noteDto.Content;
@@ -67,6 +67,34 @@ public class Notes : Controller
     {
         var allNotes = _noteService.GetAllNotes(GetRequesterGuid());
         return Ok(allNotes);
+    }
+
+    [Authorize]
+    [HttpPut("/Categories/Create")]
+    public void CreateCategory(string categoryName)
+    {
+        _noteService.AddCategory(GetRequesterGuid(), categoryName);
+    }
+
+    [Authorize]
+    [ServiceFilter(typeof(MustBeOwnerOfNoteAttribute))]
+    [HttpPut("Categories/Assign")]
+    public IActionResult AssignCateogory([FromQuery] Guid noteId, [FromQuery] Guid categoryId)
+    {
+        var category = _noteService.GetNoteCategory(categoryId);
+        if (category.Owner.Id == GetRequesterGuid())
+        {
+            _noteService.AssignCategory(noteId, categoryId);
+        }
+
+        return BadRequest();
+    }
+
+    [Authorize]
+    [HttpDelete("Categories/Delete")]
+    public void DeleteCategory([FromQuery] Guid idToDelete)
+    {
+        _noteService.DeleteNote(GetRequesterGuid(), idToDelete);
     }
 
     private Guid GetRequesterGuid()

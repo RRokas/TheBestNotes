@@ -28,17 +28,6 @@ public class UserService : IUserService
         }
 
         return false;
-
-    }
-
-    public UserDTO GetUser(string username)
-    {
-        throw new NotImplementedException();
-    }
-
-    public UserDTO GetUser(Guid userId)
-    {
-        throw new NotImplementedException();
     }
 
     private User GetCompleteUser(string username)
