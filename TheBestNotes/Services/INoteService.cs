@@ -9,4 +9,5 @@ public interface INoteService
     public bool UpdateNote(Guid requestingUserId, Guid noteId, string title, string content);
     public bool DeleteNote(Guid requestingUserId, Guid noteId);
     public bool ShareNote(Guid requestingUserId, Guid userIdToShareWith, Guid noteId);
+    public bool HasAccessToNote(Guid userId, Guid noteToAccessId);
 }
