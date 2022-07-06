@@ -1,6 +1,6 @@
 using TheBestNotes.Models.DTO;
 
-namespace TheBestNotes.Services;
+namespace TheBestNotes.Services.Interfaces;
 
 public interface IUserService
 {

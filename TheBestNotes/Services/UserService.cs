@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using TheBestNotes.Models;
 using TheBestNotes.Models.DTO;
+using TheBestNotes.Services.Interfaces;
 
 namespace TheBestNotes.Services;
 
