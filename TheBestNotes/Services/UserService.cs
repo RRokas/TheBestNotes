@@ -28,7 +28,6 @@ public class UserService : IUserService
         }
 
         return false;
-
     }
 
     private User GetCompleteUser(string username)

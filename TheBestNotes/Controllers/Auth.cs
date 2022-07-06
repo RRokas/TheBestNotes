@@ -17,7 +17,7 @@ public class Auth : Controller
     }
     
     [HttpPost("Login")]
-    public IActionResult Login([FromBody] UserCredentialDTO credentials)
+    public IActionResult Login([FromBody] UserCredentialDto credentials)
     {
         var token = _userService.Login(credentials.Username, credentials.Password);
         if (token != "")
@@ -26,7 +26,7 @@ public class Auth : Controller
     }
 
     [HttpPost("Signup")]
-    public IActionResult Signup([FromBody] UserCredentialDTO credentials)
+    public IActionResult Signup([FromBody] UserCredentialDto credentials)
     {
         var success = _userService.AddUser(credentials.Username, credentials.Password);
         if (success)
