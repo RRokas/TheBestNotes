@@ -22,11 +22,15 @@ public class NoteService : INoteService
         };
 
         _db.Notes.Add(noteToAdd);
+        _db.SaveChanges();
     }
 
     public Note GetNote(Guid requestingUserId, Guid noteId)
     {
-        throw new NotImplementedException();
+        var hasAccess = HasAccessToNote(requestingUserId, noteId);
+        if (hasAccess)
+            return _db.Notes.Single(n => n.Id == noteId);
+        return new Note();
     }
 
     public bool UpdateNote(Guid requestingUserId, Guid noteId, string title, string content)
@@ -42,5 +46,12 @@ public class NoteService : INoteService
     public bool ShareNote(Guid requestingUserId, Guid userIdToShareWith, Guid noteId)
     {
         throw new NotImplementedException();
+    }
+
+    public bool HasAccessToNote(Guid userId, Guid noteToAccessId)
+    {
+        var isOwner = _db.Notes.Any(n => n.Owner.Id == userId && n.Id == noteToAccessId);
+        
+        return isOwner;
     }
 }
