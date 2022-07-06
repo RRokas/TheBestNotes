@@ -43,6 +43,17 @@ public class Notes : Controller
 
     [Authorize]
     [ServiceFilter(typeof(MustBeOwnerOfNoteAttribute))]
+    [HttpPut("UpdateNote")]
+    public IActionResult UpdateNote([FromQuery] Guid noteId, [FromBody] BaseNoteDTO noteDto)
+    {
+        var title = noteDto.Title;
+        var content = noteDto.Content;
+        _noteService.UpdateNote(GetRequesterGuid(), noteId, title, content);
+        return Ok();
+    }
+
+    [Authorize]
+    [ServiceFilter(typeof(MustBeOwnerOfNoteAttribute))]
     [HttpDelete("DeleteNote")]
     public IActionResult DeleteNote([FromQuery] Guid noteId)
     {

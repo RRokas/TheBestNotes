@@ -42,9 +42,12 @@ public class NoteService : INoteService
         return notes;
     }
 
-    public bool UpdateNote(Guid requestingUserId, Guid noteId, string title, string content)
+    public void UpdateNote(Guid requestingUserId, Guid noteId, string title, string content)
     {
-        throw new NotImplementedException();
+        var noteToUpdate = _db.Notes.Single(n => n.Id == noteId);
+        noteToUpdate.Title = title;
+        noteToUpdate.Content = content;
+        _db.SaveChanges();
     }
 
     public void DeleteNote(Guid requestingUserId, Guid noteId)
