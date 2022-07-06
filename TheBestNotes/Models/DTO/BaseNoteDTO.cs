@@ -8,4 +8,6 @@ public class BaseNoteDTO
     public string Title { get; init; }
     [Required]
     public string Content { get; init; }
+    [Required]
+    public string Category { get; init; }
 }

@@ -2,9 +2,11 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
+using TheBestNotes.Attributes;
 using TheBestNotes.Models;
 using TheBestNotes.Models.DTO;
 using TheBestNotes.Services;
+using TheBestNotes.Services.Interfaces;
 
 namespace TheBestNotes.Controllers;
 
@@ -23,12 +25,13 @@ public class Notes : Controller
     {
         var owner = User.FindFirst(ClaimTypes.NameIdentifier).Value;
         var ownerGuid = new Guid(owner);
-        _noteService.AddNewNote(ownerGuid, noteData.Title, noteData.Content);
+        _noteService.AddNewNote(ownerGuid, noteData.Title, noteData.Category, noteData.Content);
     }
 
     [Authorize]
-    [HttpGet("GetSingle")]
-    public IActionResult GetSingle([FromQuery] Guid noteId)
+    [ServiceFilter(typeof(MustBeOwnerOfNoteAttribute))]
+    [HttpGet("GetNote")]
+    public IActionResult GetNote([FromQuery] Guid noteId)
     {
         var requester = GetRequesterGuid();
         var hasAccessToNote = _noteService.HasAccessToNote(requester, noteId);
@@ -36,6 +39,23 @@ public class Notes : Controller
         if (hasAccessToNote)
             return Ok(_noteService.GetNote(requester, noteId));
         return Unauthorized();
+    }
+
+    [Authorize]
+    [ServiceFilter(typeof(MustBeOwnerOfNoteAttribute))]
+    [HttpDelete("DeleteNote")]
+    public IActionResult DeleteNote([FromQuery] Guid noteId)
+    {
+        _noteService.DeleteNote(GetRequesterGuid(), noteId);
+        return Ok();
+    }
+
+    [Authorize]
+    [HttpGet("GetAllNotes")]
+    public IActionResult GetAllNotes()
+    {
+        var allNotes = _noteService.GetAllNotes(GetRequesterGuid());
+        return Ok(allNotes);
     }
 
     private Guid GetRequesterGuid()

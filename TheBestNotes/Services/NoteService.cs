@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TheBestNotes.Models;
+using TheBestNotes.Services.Interfaces;
 
 namespace TheBestNotes.Services;
 
@@ -12,12 +13,13 @@ public class NoteService : INoteService
         _db = dbContext;
     }
     
-    public void AddNewNote(Guid ownerUserId, string title, string content)
+    public void AddNewNote(Guid ownerUserId, string title, string category, string content)
     {
         var noteToAdd = new Note()
         {
             Owner = _db.Users.Single(u => u.Id == ownerUserId),
             Title = title,
+            Category = category,
             Content = content
         };
 
@@ -27,10 +29,17 @@ public class NoteService : INoteService
 
     public Note GetNote(Guid requestingUserId, Guid noteId)
     {
-        var hasAccess = HasAccessToNote(requestingUserId, noteId);
-        if (hasAccess)
-            return _db.Notes.Single(n => n.Id == noteId);
-        return new Note();
+        return _db.Notes.Single(n => n.Id == noteId);
+    }
+
+    public List<Note> GetAllNotes(Guid userId)
+    {
+        var notes = new List<Note>();
+
+        var ownedNotes = _db.Notes.Where(n => n.Owner.Id == userId);
+        notes.AddRange(ownedNotes);
+        
+        return notes;
     }
 
     public bool UpdateNote(Guid requestingUserId, Guid noteId, string title, string content)
@@ -38,14 +47,11 @@ public class NoteService : INoteService
         throw new NotImplementedException();
     }
 
-    public bool DeleteNote(Guid requestingUserId, Guid noteId)
+    public void DeleteNote(Guid requestingUserId, Guid noteId)
     {
-        throw new NotImplementedException();
-    }
-
-    public bool ShareNote(Guid requestingUserId, Guid userIdToShareWith, Guid noteId)
-    {
-        throw new NotImplementedException();
+        var noteToDelete = _db.Notes.Single(n => n.Id == noteId);
+        _db.Notes.Remove(noteToDelete);
+        _db.SaveChanges();
     }
 
     public bool HasAccessToNote(Guid userId, Guid noteToAccessId)
